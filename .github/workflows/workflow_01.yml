@@ -1,0 +1,41 @@
+name: Run Workflow_01 every 10 Minutes
+
+on:
+  schedule:
+    # Runs every 15 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies (if needed)
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Python script
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
+        API_KEY: ${{ secrets.API_KEY }}
+        FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+      run: python Script_01.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'fer-vasco[bot]'
+        git config --global user.email 'fer-vasco[bot]@users.noreply.github.com'
+        git push || echo "Nothing to push"
