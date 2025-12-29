@@ -1,4 +1,4 @@
-requests
+sqlite3
 pandas
-python-dotenv
-openpyxl
+datetime
+pytz
